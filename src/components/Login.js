@@ -1,7 +1,13 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { Link } from "react-router-dom";
-import { checkValidData, checkValidName } from "../utils/validate";
+import { checkValidData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -14,14 +20,38 @@ const Login = () => {
   const handleButtonClick = () => {
     const message = checkValidData(email.current.value, password.current.value);
     setErrorMessage(message);
-  };
-  const handleButtonClickName = () => {
-    const message = checkValidName(
-      email.current.value,
-      password.current.value,
-      name.current.value
-    );
-    setErrorMessage(message);
+    if (message) return;
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + " - " + errorMessage);
+        });
+    } else {
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + " - " + errorMessage);
+        });
+    }
   };
   return (
     <div>
@@ -58,7 +88,7 @@ const Login = () => {
         <p className="text-red-500 py-2 font-bold">{errorMessage}</p>
         <button
           className="p-3 font-bold w-full bg-red-600 rounded-lg bg-opacity-100"
-          onClick={isSignInForm ? handleButtonClick : handleButtonClickName}>
+          onClick={handleButtonClick}>
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
         <p className="py-4 text-gray-400 font-bold">
