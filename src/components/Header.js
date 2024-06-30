@@ -48,8 +48,8 @@ const Header = () => {
     dispatch(changeLanguage(e.target.value));
   };
   return (
-    <div className="w-screen absolute px-6 py-6 z-10 flex justify-between">
-      <img className="w-52" src={LOGO} alt="logo"></img>
+    <div className="w-screen absolute px-6 py-6 z-10 flex flex-col justify-between md:flex-row">
+      <img className="w-52 mx-auto md:mx-0" src={LOGO} alt="logo"></img>
       {user && (
         <div className="flex p-2 justify-between">
           {showGptSearch && (
@@ -69,7 +69,7 @@ const Header = () => {
             {showGptSearch ? "Homepage" : "GPT Search"}
           </button>
           <img
-            className="w-12 h-12 m-2"
+            className="hidden md:block w-12 h-12 m-2"
             alt="usericon"
             src={user.photoURL}></img>
 
